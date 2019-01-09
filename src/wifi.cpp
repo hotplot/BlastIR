@@ -34,7 +34,8 @@ namespace wifi
         connectHandler = WiFi.onStationModeGotIP(&gotIPHandler);
         disconnectHandler = WiFi.onStationModeDisconnected(&disconnectedHandler);
 
-        WiFi.mode(WIFI_AP_STA);
+        WiFi.mode(WIFI_STA);
+        WiFi.hostname(HOSTNAME);
         WiFi.begin(WIFI_SSID, WIFI_PASS);
     }
 }
