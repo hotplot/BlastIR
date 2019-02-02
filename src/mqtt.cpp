@@ -64,13 +64,18 @@ namespace mqtt
 
     void publishReceivedIRData(const char *message)
     {
+        Serial.println("Sending received data: ");
+        Serial.println(message);
+
         if (mqtt::connected)
-            mqttClient.publish(MQTT_IR_RECV_TOPIC, 0, 0, message);
+            mqttClient.publish(MQTT_IR_RECV_TOPIC, 0, false, message);
     }
 
     void publishLog(const char *message)
     {
+        Serial.println(message);
+
         if (mqtt::connected)
-            mqttClient.publish(MQTT_IR_LOG_TOPIC, 0, 0, message);
+            mqttClient.publish(MQTT_IR_LOG_TOPIC, 0, false, message);
     }
 }
