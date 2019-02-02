@@ -25,9 +25,13 @@ void loop()
 {
     delay(500);
 
-    if (ir::hasRecordedData) {
+    // If the IR recorder has finished receiving a command, process it
+    if (ir::hasRecordedData && ir::isRecording == false) {
         ir::processRecordedData();
-    } else if (ir::isRecording == false) {
+    }
+    
+    // If the IR recorder is stopped, restart it
+    if (ir::isRecording == false) {
         ir::startRecording();
     }
 }

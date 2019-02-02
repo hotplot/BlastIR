@@ -90,6 +90,7 @@ namespace ir
         else
             mqtt::publishLog("Received external IR command");
 
+        numRecordedDurations = 0;
         hasRecordedData = false;
     }
 }
