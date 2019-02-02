@@ -58,13 +58,17 @@ namespace ir
         stopCarrier();
     }
 
-    void processCommand(const char* command)
+    void clearCommandBuffer()
     {
-        // Parse the supplied command and extract the carrier on/off durations
-        // This is done before transmitting so that the string parsing time does not affect the IR signal timing
         numParsedDurations = 0;
+    }
 
-        const char *c = command;
+    void parseDurations(const char *payload)
+    {
+        // Parse the supplied command and extract the carrier on/off durations.
+        // The command should be formatted as a sequence of space-separated integers.
+        // The first represents the ON time, the second the OFF time, and so on repeatedly.
+        const char *c = payload;
         while (*c != 0 && numParsedDurations < MAX_DURATIONS)
         {
             // Iterate over the next sequence of digits
@@ -82,8 +86,10 @@ namespace ir
             // Store the duration
             parsedDurations[numParsedDurations++] = duration;
         }
-        
-        // Now transmit the parsed command
+    }
+
+    void transmit()
+    {
         stopRecording();
 
         for (int index = 0; index < numParsedDurations; index += 2)
@@ -96,6 +102,7 @@ namespace ir
                 delayMicroseconds(parsedDurations[index + 1]);
         }
 
+        clearCommandBuffer();
         startRecording();
 
         mqtt::publishLog("Transmitted IR command");

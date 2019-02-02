@@ -15,7 +15,9 @@ namespace ir
     void stopRecording();
     void processRecordedData();
     
-    void processCommand(const char *command);
+    void clearCommandBuffer();
+    void parseDurations(const char *payload);
+    void transmit();
 }
 
 #endif

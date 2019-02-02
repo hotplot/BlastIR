@@ -28,8 +28,17 @@ namespace
 
     void messageHandler(char *topic, char *payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
     {
+        // If this is the start of a new message, clear any existing parsed durations
+        if (index == 0)
+            ir::clearCommandBuffer();
+        
+        // Parse any durations contained in this message
         if (payload != NULL)
-            ir::processCommand(payload);
+            ir::parseDurations(payload);
+        
+        // If this is the final message, transmit the IR command
+        if (index + len == total)
+            ir::transmit();
     }
 }
 
