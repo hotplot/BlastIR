@@ -15,6 +15,7 @@ extern "C" {
 
 namespace
 {
+    uint16_t currentDuration = 0;
     uint16_t numParsedDurations = 0;
     uint16_t parsedDurations[MAX_DURATIONS];
 
@@ -56,35 +57,41 @@ namespace ir
     void setupSend()
     {
         stopCarrier();
+        clearCommandBuffer();
     }
 
     void clearCommandBuffer()
     {
+        currentDuration = 0;
         numParsedDurations = 0;
     }
 
-    void parseDurations(const char *payload)
+    void parseDurations(const char *message, size_t len, bool messageComplete)
     {
-        // Parse the supplied command and extract the carrier on/off durations.
-        // The command should be formatted as a sequence of space-separated integers.
+        // Parse the supplied message and extract the carrier on/off durations.
+        // The message should be formatted as a sequence of space-separated integers.
         // The first represents the ON time, the second the OFF time, and so on repeatedly.
-        const char *c = payload;
-        while (*c != 0 && numParsedDurations < MAX_DURATIONS)
+        uint16_t index = 0;
+        while (index < len && numParsedDurations < MAX_DURATIONS)
         {
-            // Iterate over the next sequence of digits
-            uint16_t duration = 0;
-            while (isdigit(*c))
+            // Iterate over the next sequence of digits and update currentDuration
+            while (index < len && isdigit(message[index]))
             {
-                duration = duration * 10 + (*c - 48);
-                ++c;
+                currentDuration = currentDuration * 10 + (message[index] - 48);
+                ++index;
+            }
+            
+            // If we found a space, or EOF in the final part of the message, then store the current duration.
+            // Otherwise we might have a partially-parsed duration in a multipart message and can't store it yet.
+            if (isspace(message[index]) || (index == len && messageComplete))
+            {
+               parsedDurations[numParsedDurations++] = currentDuration;
+               currentDuration = 0;
             }
 
             // Skip the next chars until we find another digit or EOF (theoretically after exactly one space)
-            while (*c != 0 && isdigit(*c) == false)
-                ++c;
-            
-            // Store the duration
-            parsedDurations[numParsedDurations++] = duration;
+            while (index < len && isdigit(message[index]) == false)
+                ++index;
         }
     }
 

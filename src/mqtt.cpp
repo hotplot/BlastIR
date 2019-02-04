@@ -33,11 +33,12 @@ namespace
             ir::clearCommandBuffer();
         
         // Parse any durations contained in this message
+        bool messageComplete = index + len == total;
         if (payload != NULL)
-            ir::parseDurations(payload);
+            ir::parseDurations(payload, len, messageComplete);
         
         // If this is the final message, transmit the IR command
-        if (index + len == total)
+        if (messageComplete)
             ir::transmit();
     }
 }
