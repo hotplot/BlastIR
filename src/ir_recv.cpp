@@ -15,7 +15,7 @@ namespace
 
     Ticker recordingCompletionTimer;
 
-    void receiverPinInterrupt()
+    void ICACHE_RAM_ATTR receiverPinInterrupt()
     {
         unsigned long currentTime = micros();
         unsigned long elapsedTime = currentTime - lastTransitionTime;
