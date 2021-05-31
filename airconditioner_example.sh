@@ -30,6 +30,10 @@ low(){
 
 mode=$1
 target=$2
+if [[ "$mode" = "toggle" ]]; then
+        power
+        exit
+fi
 if [[ "$mode" = "fan" ]]; then
 	fan
 	[[ "$2" = "high" ]] && high
