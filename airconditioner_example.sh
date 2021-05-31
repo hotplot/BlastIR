@@ -1,4 +1,23 @@
 #!/bin/bash
+# Usage 
+# set cooling mode, temerature and fan speed
+# > script.sh cool 20 high
+# > script.sh cool 18 low
+#
+# just set coolingmode+temp
+# > script.sh cool 22
+#
+# toggle power
+# > script.sh toggle
+#
+# set fan mode
+# > script.sh fan
+# set fan mode with low/high
+# > script.sh fan <low/high>
+#
+# set dry mode
+# > script.sh dry
+
 send() {
 	mosquitto_pub -t "ir/heatpump/send" -m "$1"
 }
